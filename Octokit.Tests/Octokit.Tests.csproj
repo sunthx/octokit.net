@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Octokit\Octokit.csproj" />
     <ProjectReference Include="..\Octokit.Reactive\Octokit.Reactive.csproj" />
-    <PackageReference Include="coverlet.msbuild" Version="2.2.1">
+    <PackageReference Include="coverlet.msbuild" Version="2.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
