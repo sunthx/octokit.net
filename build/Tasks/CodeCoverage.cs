@@ -11,49 +11,49 @@ public sealed class CodeCoverage : FrostingTask<Context>
 {
     public override void Run(Context context)
     {
-        var outputs = new List<string>();
+        var coverageFiles = new List<FilePath>();
         foreach (var project in context.Projects.Where(x => x.UnitTests))
         {
-            context.Information("Executing Code Coverage Project {0}...", project.Name);
+            context.Information("Executing Code Coverage for Project {0}...", project.Name);
 
-            var output = context.CodeCoverage
-                .CombineWithFilePath(project.Name + "-netcoreapp2.0.xml")
-                .MakeAbsolute(context.Environment)
-                .ToString();
-            outputs.Add(output);
+            var dotNetCoreCoverage = context.CodeCoverage
+                .CombineWithFilePath(project.Name + "-netcoreapp2.0.xml");
+            coverageFiles.Add(dotNetCoreCoverage);
 
             context.Coverlet(project, new CoverletToolSettings()
             {
                 Configuration = context.Configuration,
                 Framework = "netcoreapp2.0",
-                Output = output
+                Output = dotNetCoreCoverage.FullPath
             });
 
             if (context.IsRunningOnWindows())
             {
-                output = context.CodeCoverage
-                    .CombineWithFilePath(project.Name + "-net452.xml")
-                    .MakeAbsolute(context.Environment)
-                    .ToString();
-                outputs.Add(output);
+                var dotNetFrameworkCoverage = context.CodeCoverage
+                    .CombineWithFilePath(project.Name + "-net452.xml");
+                coverageFiles.Add(dotNetFrameworkCoverage);
 
                 context.Coverlet(project, new CoverletToolSettings
                 {
                     Configuration = context.Configuration,
                     Framework = "net452",
-                    Output = output
+                    Output = dotNetFrameworkCoverage.FullPath
                 });
             }
 
             if (context.AppVeyor)
             {
+                context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
+
                 var userProfilePath = context.Environment.GetEnvironmentVariable("userprofile");
                 var codecovPath = new DirectoryPath(userProfilePath)
                     .CombineWithFilePath(".nuget\\packages\\codecov\\1.0.5\\tools\\codecov.exe");
 
                 context.Tools.RegisterFile(codecovPath);
-
-                context.Codecov(outputs);
+                foreach (var coverage in coverageFiles)
+                {
+                    context.Codecov(coverage.FullPath);
+                }
             }
         }
     }
