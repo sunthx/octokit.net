@@ -1,5 +1,9 @@
 image: Visual Studio 2017
 
+environment:
+  CODECOV_TOKEN:
+    secure: atEiGSGhgygzvo/dKLOwObQLMMFZyvsrW4rMT4VempTjJeLGw1SNHdlm1vxVwd0B
+
 branches:
   only:
     - master
