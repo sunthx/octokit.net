@@ -6,6 +6,8 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   echo "new limit: `ulimit -n`"
 fi
 
+dotnet tool install --global coverlet.console
+
 cd build
 echo "Preparing Cake.Frosting build runner..."
 dotnet restore

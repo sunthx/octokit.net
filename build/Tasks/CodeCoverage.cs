@@ -1,8 +1,6 @@
 using System.Linq;
 using Cake.Common;
 using Cake.Common.Diagnostics;
-using Cake.Core.IO;
-using Cake.Coverlet;
 using Cake.Frosting;
 
 [Dependency(typeof(Build))]
@@ -13,27 +11,21 @@ public sealed class CodeCoverage : FrostingTask<Context>
         foreach (var project in context.Projects.Where(x => x.UnitTests))
         {
             context.Information("Executing Code Coverage Project {0}...", project.Name);
-            var dotNetCoreTestSettings = context.GetTestSettings();
-            dotNetCoreTestSettings.Framework = "netcoreapp2.0";
 
-            context.DotNetCoreTest(project.Path.FullPath, dotNetCoreTestSettings, new CoverletSettings()
+            context.Coverlet(project, new CoverletToolSettings()
             {
-                CollectCoverage = true,
-                CoverletOutputFormat = CoverletOutputFormat.opencover,
-                CoverletOutputDirectory = DirectoryPath.FromString(@".\coverage-results\"),
-                CoverletOutputName = $"{project.Name}-netcoreapp2.0"
+                Configuration = context.Configuration,
+                Framework = "netcoreapp2.0",
+                Output = @".\coverage-results\" + project.Name + "-netcoreapp2.0.xml"
             });
 
             if (context.IsRunningOnWindows())
             {
-                dotNetCoreTestSettings.Framework = "net452";
-
-                context.DotNetCoreTest(project.Path.FullPath, dotNetCoreTestSettings, new CoverletSettings()
+                context.Coverlet(project, new CoverletToolSettings
                 {
-                    CollectCoverage = true,
-                    CoverletOutputFormat = CoverletOutputFormat.opencover,
-                    CoverletOutputDirectory = DirectoryPath.FromString(@".\coverage-results\"),
-                    CoverletOutputName = $"{project.Name}-net452.0"
+                    Configuration = context.Configuration,
+                    Framework = "net452",
+                    Output = @".\coverage-results\" + project.Name + "-net452.xml"
                 });
             }
         }
