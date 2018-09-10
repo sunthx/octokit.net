@@ -14,6 +14,7 @@ public class Lifetime : FrostingLifetime<Context>
         context.LinkSources = context.Argument("linkSources", false);
 
         context.Artifacts = "./packaging/";
+        context.CodeCoverage = "./coverage-results/";
 
         // Build system information.
         var buildSystem = context.BuildSystem();

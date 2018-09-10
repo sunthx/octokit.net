@@ -15,7 +15,10 @@ public sealed class CodeCoverage : FrostingTask<Context>
         {
             context.Information("Executing Code Coverage Project {0}...", project.Name);
 
-            var output = @".\coverage-results\" + project.Name + "-netcoreapp2.0.xml";
+            var output = context.CodeCoverage
+                .CombineWithFilePath(project.Name + "-netcoreapp2.0.xml")
+                .MakeAbsolute(context.Environment)
+                .ToString();
             outputs.Add(output);
 
             context.Coverlet(project, new CoverletToolSettings()
@@ -27,7 +30,10 @@ public sealed class CodeCoverage : FrostingTask<Context>
 
             if (context.IsRunningOnWindows())
             {
-                output = @".\coverage-results\" + project.Name + "-net452.xml";
+                output = context.CodeCoverage
+                    .CombineWithFilePath(project.Name + "-net452.xml")
+                    .MakeAbsolute(context.Environment)
+                    .ToString();
                 outputs.Add(output);
 
                 context.Coverlet(project, new CoverletToolSettings

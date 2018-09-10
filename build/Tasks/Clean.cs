@@ -7,7 +7,8 @@ public sealed class Clean : FrostingTask<Context>
     {
         var directories = context.GetDirectories("./**/bin", x => !x.Path.FullPath.Contains("/build/"))
             + context.GetDirectories("./**/obj", x => !x.Path.FullPath.Contains("/build/"))
-            + context.Artifacts;
+            + context.Artifacts
+            + context.CodeCoverage;
 
         foreach (var directory in directories)
         {
