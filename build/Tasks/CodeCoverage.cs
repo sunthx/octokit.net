@@ -3,6 +3,7 @@ using System.Linq;
 using Cake.Codecov;
 using Cake.Common;
 using Cake.Common.Diagnostics;
+using Cake.Core.IO;
 using Cake.Frosting;
 
 [Dependency(typeof(Build))]
@@ -46,7 +47,12 @@ public sealed class CodeCoverage : FrostingTask<Context>
 
             if (context.AppVeyor)
             {
-                context.Tools.RegisterFile("%userprofile%\\.nuget\\packages\\codecov\\1.0.5\\tools\\codecov.exe");
+                var userProfilePath = context.Environment.GetEnvironmentVariable("userprofile");
+                var codecovPath = new DirectoryPath(userProfilePath)
+                    .CombineWithFilePath(".nuget\\packages\\codecov\\1.0.5\\tools\\codecov.exe");
+
+                context.Tools.RegisterFile(codecovPath);
+
                 context.Codecov(outputs);
             }
         }

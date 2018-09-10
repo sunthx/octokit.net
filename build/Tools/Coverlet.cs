@@ -10,8 +10,8 @@ public class CoverletTool : Tool<CoverletToolSettings>
 {
     private readonly ICakeEnvironment _environment;
 
-    public CoverletTool(IFileSystem fileSystem, ICakeEnvironment environment, IProcessRunner runner, IGlobber globber) 
-        : base(fileSystem, environment, runner, globber)
+    public CoverletTool(IFileSystem fileSystem, ICakeEnvironment environment, IProcessRunner runner, IToolLocator tools) 
+        : base(fileSystem, environment, runner, tools)
     {
         _environment = environment;
     }
@@ -57,6 +57,6 @@ public static class CoverletAliases
         if (settings == null)
             throw new ArgumentNullException(nameof(settings));
 
-        new CoverletTool(context.FileSystem, context.Environment, context.ProcessRunner, context.Globber).Coverlet(project, settings);
+        new CoverletTool(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools).Coverlet(project, settings);
     }
 }
