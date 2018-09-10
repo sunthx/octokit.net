@@ -46,6 +46,7 @@ public sealed class CodeCoverage : FrostingTask<Context>
 
             if (context.AppVeyor)
             {
+                context.Tools.RegisterFile("%userprofile%\\.nuget\\packages\\codecov\\1.0.5\\tools\\codecov.exe");
                 context.Codecov(outputs);
             }
         }
