@@ -13,37 +13,38 @@ public sealed class CodeCoverage : FrostingTask<Context>
     public override void Run(Context context)
     {
         var coverageFiles = new List<FilePath>();
-        foreach (var project in context.Projects.Where(x => x.UnitTests))
+
+        if (context.AppVeyor)
         {
-            context.Information("Executing Code Coverage for Project {0}...", project.Name);
-
-            var dotNetCoreCoverage = context.CodeCoverage
-                .CombineWithFilePath(project.Name + "-netcoreapp2.0.xml");
-            coverageFiles.Add(dotNetCoreCoverage);
-
-            context.Coverlet(project, new CoverletToolSettings()
+            foreach (var project in context.Projects.Where(x => x.UnitTests))
             {
-                Configuration = context.Configuration,
-                Framework = "netcoreapp2.0",
-                Output = dotNetCoreCoverage.FullPath
-            });
+                context.Information("Executing Code Coverage for Project {0}...", project.Name);
 
-            if (context.IsRunningOnWindows())
-            {
-                var dotNetFrameworkCoverage = context.CodeCoverage
-                    .CombineWithFilePath(project.Name + "-net452.xml");
-                coverageFiles.Add(dotNetFrameworkCoverage);
+                var dotNetCoreCoverage = context.CodeCoverage
+                    .CombineWithFilePath(project.Name + "-netcoreapp2.0.xml");
+                coverageFiles.Add(dotNetCoreCoverage);
 
-                context.Coverlet(project, new CoverletToolSettings
+                context.Coverlet(project, new CoverletToolSettings()
                 {
                     Configuration = context.Configuration,
-                    Framework = "net452",
-                    Output = dotNetFrameworkCoverage.FullPath
+                    Framework = "netcoreapp2.0",
+                    Output = dotNetCoreCoverage.FullPath
                 });
-            }
 
-            if (context.AppVeyor)
-            {
+                if (context.IsRunningOnWindows())
+                {
+                    var dotNetFrameworkCoverage = context.CodeCoverage
+                        .CombineWithFilePath(project.Name + "-net452.xml");
+                    coverageFiles.Add(dotNetFrameworkCoverage);
+
+                    context.Coverlet(project, new CoverletToolSettings
+                    {
+                        Configuration = context.Configuration,
+                        Framework = "net452",
+                        Output = dotNetFrameworkCoverage.FullPath
+                    });
+                }
+
                 context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
 
                 var buildVersion = $"{context.Version.FullSemVer}.build.{context.EnvironmentVariable("APPVEYOR_BUILD_NUMBER")}";
@@ -58,7 +59,7 @@ public sealed class CodeCoverage : FrostingTask<Context>
                 {
                     var settings = new CodecovSettings
                     {
-                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath },
+                        Files = new[] { coverageFile.MakeAbsolute(context.Environment).FullPath },
                         Verbose = true,
                         EnvironmentVariables = new Dictionary<string, string>()
                         {
