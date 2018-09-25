@@ -10,7 +10,7 @@ coverage:
   status:
     project: yes
     patch: yes
-    changes: yes
+    changes: no
 
 parsers:
   gcov:
@@ -26,4 +26,4 @@ comment:
   require_changes: no
   
 fixes:
-  - "/C/projects/octokit-graphql/::"
+  - "/C/projects/octokit-net/::"
