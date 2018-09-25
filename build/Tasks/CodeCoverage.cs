@@ -46,26 +46,20 @@ public sealed class CodeCoverage : FrostingTask<Context>
             {
                 context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
 
+                context.Information($"Current GitVersion_SemVer: {context.EnvironmentVariable("GitVersion_SemVer")}");
+                context.Information($"Current APPVEYOR_BUILD_VERSION: {context.EnvironmentVariable("APPVEYOR_BUILD_VERSION")}");
+
                 var userProfilePath = context.EnvironmentVariable("USERPROFILE");
                 var codecovPath = new DirectoryPath(userProfilePath)
                     .CombineWithFilePath(".nuget\\packages\\codecov\\1.1.0\\tools\\codecov.exe");
 
                 context.Tools.RegisterFile(codecovPath);
 
-                context.Information($"Environment Variable: {context.EnvironmentVariable("GitVersion_SemVer")}");
-                context.Information($"Current APPVEYOR_BUILD_VERSION: {context.EnvironmentVariable("APPVEYOR_BUILD_VERSION")}");
-
-                var buildVersion = string.Format("{0}{1}",
-                    context.EnvironmentVariable("GitVersion_SemVer"),
-                    context.BuildSystem().AppVeyor.Environment.Build.Version
-                );
-
                 foreach (var coverageFile in coverageFiles)
                 {
                     var settings = new CodecovSettings
                     {
-                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath },
-                        EnvironmentVariables = new Dictionary<string, string> { { "APPVEYOR_BUILD_VERSION", buildVersion } }
+                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath }
                     };
 
                     context.Codecov(settings);
