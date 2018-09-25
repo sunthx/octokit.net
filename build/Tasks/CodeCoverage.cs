@@ -59,7 +59,8 @@ public sealed class CodeCoverage : FrostingTask<Context>
                 {
                     var settings = new CodecovSettings
                     {
-                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath }
+                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath },
+                        Verbose = true
                     };
 
                     context.Codecov(settings);
