@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Cake.Codecov" Version="0.4.0" />
     <PackageReference Include="Cake.Frosting" Version="0.1.0-alpha0078" />
-    <PackageReference Include="Codecov" Version="1.0.5" />
+    <PackageReference Include="Codecov" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

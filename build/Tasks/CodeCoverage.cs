@@ -46,9 +46,9 @@ public sealed class CodeCoverage : FrostingTask<Context>
             {
                 context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
 
-                var userProfilePath = context.Environment.GetEnvironmentVariable("USERPROFILE");
+                var userProfilePath = context.EnvironmentVariable("USERPROFILE");
                 var codecovPath = new DirectoryPath(userProfilePath)
-                    .CombineWithFilePath(".nuget\\packages\\codecov\\1.0.5\\tools\\codecov.exe");
+                    .CombineWithFilePath(".nuget\\packages\\codecov\\1.1.0\\tools\\codecov.exe");
 
                 context.Tools.RegisterFile(codecovPath);
 
