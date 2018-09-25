@@ -49,6 +49,11 @@ public sealed class CodeCoverage : FrostingTask<Context>
                 context.Information($"Current GitVersion_SemVer: {context.EnvironmentVariable("GitVersion_SemVer")}");
                 context.Information($"Current APPVEYOR_BUILD_VERSION: {context.EnvironmentVariable("APPVEYOR_BUILD_VERSION")}");
 
+                foreach (var keyValuePair in context.EnvironmentVariables())
+                {
+                    context.Information($"{keyValuePair.Key} : {keyValuePair.Value}");
+                }
+
                 var userProfilePath = context.EnvironmentVariable("USERPROFILE");
                 var codecovPath = new DirectoryPath(userProfilePath)
                     .CombineWithFilePath(".nuget\\packages\\codecov\\1.1.0\\tools\\codecov.exe");
