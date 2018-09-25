@@ -46,8 +46,8 @@ public sealed class CodeCoverage : FrostingTask<Context>
             {
                 context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
 
-                context.Information($"Current GitVersion_SemVer: {context.EnvironmentVariable("GitVersion_SemVer")}");
-                context.Information($"Current APPVEYOR_BUILD_VERSION: {context.EnvironmentVariable("APPVEYOR_BUILD_VERSION")}");
+                var buildVersion = $"{context.Version.FullSemVer}.build.{context.EnvironmentVariable("APPVEYOR_BUILD_NUMBER")}";
+                context.Information($"Calculated buildVersion: {buildVersion}");
 
                 foreach (var keyValuePair in context.EnvironmentVariables())
                 {
@@ -65,7 +65,11 @@ public sealed class CodeCoverage : FrostingTask<Context>
                     var settings = new CodecovSettings
                     {
                         Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath },
-                        Verbose = true
+                        Verbose = true,
+                        EnvironmentVariables = new Dictionary<string, string>()
+                        {
+                            { "APPVEYOR_BUILD_VERSION", buildVersion}
+                        }
                     };
 
                     context.Codecov(settings);
