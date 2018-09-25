@@ -57,13 +57,16 @@ public sealed class CodeCoverage : FrostingTask<Context>
                     context.BuildSystem().AppVeyor.Environment.Build.Version
                 );
 
-                var settings = new CodecovSettings
+                foreach (var coverageFile in coverageFiles)
                 {
-                    Files = coverageFiles.Select(path => path.MakeAbsolute(context.Environment).FullPath).ToArray(),
-                    EnvironmentVariables = new Dictionary<string, string> { { "APPVEYOR_BUILD_VERSION", buildVersion } }
-                };
+                    var settings = new CodecovSettings
+                    {
+                        Files = new [] { coverageFile.MakeAbsolute(context.Environment).FullPath },
+                        EnvironmentVariables = new Dictionary<string, string> { { "APPVEYOR_BUILD_VERSION", buildVersion } }
+                    };
 
-                context.Codecov(settings);
+                    context.Codecov(settings);
+                }
             }
         }
     }
