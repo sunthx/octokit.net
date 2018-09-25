@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cake.Codecov;
 using Cake.Common;
+using Cake.Common.Build;
 using Cake.Common.Diagnostics;
 using Cake.Core.IO;
 using Cake.Frosting;
@@ -51,10 +52,18 @@ public sealed class CodeCoverage : FrostingTask<Context>
 
                 context.Tools.RegisterFile(codecovPath);
 
-                foreach (var coverage in coverageFiles)
+                var buildVersion = string.Format("{0}.build.{1}",
+                    context.EnvironmentVariable("GitVersion_SemVer"),
+                    context.BuildSystem().AppVeyor.Environment.Build.Version
+                );
+
+                var settings = new CodecovSettings
                 {
-                    context.Codecov(coverage.FullPath);
-                }
+                    Files = coverageFiles.Select(path => path.FullPath).ToArray(),
+                    EnvironmentVariables = new Dictionary<string, string> { { "APPVEYOR_BUILD_VERSION", buildVersion } }
+                };
+
+                context.Codecov(settings);
             }
         }
     }
