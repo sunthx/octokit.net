@@ -53,6 +53,7 @@ public sealed class CodeCoverage : FrostingTask<Context>
                 context.Tools.RegisterFile(codecovPath);
 
                 context.Information($"Environment Variable: {context.EnvironmentVariable("GitVersion_SemVer")}");
+                context.Information($"Current APPVEYOR_BUILD_VERSION: {context.EnvironmentVariable("APPVEYOR_BUILD_VERSION")}");
 
                 var buildVersion = string.Format("{0}{1}",
                     context.EnvironmentVariable("GitVersion_SemVer"),
