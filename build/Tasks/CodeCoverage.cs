@@ -47,12 +47,6 @@ public sealed class CodeCoverage : FrostingTask<Context>
                 context.Information("Uploading Coverage Files: {0}", string.Join(",", coverageFiles.Select(path => path.GetFilename().ToString())));
 
                 var buildVersion = $"{context.Version.FullSemVer}.build.{context.EnvironmentVariable("APPVEYOR_BUILD_NUMBER")}";
-                context.Information($"Calculated buildVersion: {buildVersion}");
-
-                foreach (var keyValuePair in context.EnvironmentVariables())
-                {
-                    context.Information($"{keyValuePair.Key} : {keyValuePair.Value}");
-                }
 
                 var userProfilePath = context.EnvironmentVariable("USERPROFILE");
                 var codecovPath = new DirectoryPath(userProfilePath)
